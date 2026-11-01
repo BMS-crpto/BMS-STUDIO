@@ -3,10 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 android {
-    namespace = "com.mycutpro.app"
+    namespace = "com.mycutpro"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.mycutpro.app"
+        applicationId = "com.mycutpro"
         minSdk = 24
         targetSdk = 35
         versionCode = 2
