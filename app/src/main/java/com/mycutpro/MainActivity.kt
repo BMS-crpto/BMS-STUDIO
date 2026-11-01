@@ -2,6 +2,7 @@ package com.mycutpro
 
 import android.app.Activity
 import android.os.Bundle
+import android.content.Intent
 import android.graphics.Color
 import android.view.Gravity
 import android.view.ViewGroup
@@ -10,19 +11,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.VideoView
 import android.widget.MediaController
-import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : Activity() {
 
     private lateinit var videoView: VideoView
-
-    private val videoPicker =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                videoView.setVideoURI(uri)
-                videoView.start()
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +47,16 @@ class MainActivity : Activity() {
         val chooseButton = Button(this).apply {
             text = "Choose Video"
             setOnClickListener {
-                videoPicker.launch("video/*")
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    type = "video/*"
+                }
+                startActivityForResult(intent, 100)
             }
         }
 
         layout.addView(title)
         layout.addView(subtitle)
+
         layout.addView(
             videoView,
             LinearLayout.LayoutParams(
@@ -69,8 +65,27 @@ class MainActivity : Activity() {
                 1f
             )
         )
+
         layout.addView(chooseButton)
 
         setContentView(layout)
+    }
+
+    @Deprecated("Deprecated in Android, but supported")
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            val videoUri = data?.data
+
+            if (videoUri != null) {
+                videoView.setVideoURI(videoUri)
+                videoView.start()
+            }
+        }
     }
 }
